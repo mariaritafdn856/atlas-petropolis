@@ -16,7 +16,8 @@
 *{box-sizing:border-box}html,body{height:100%;margin:0}
 body{font:13px/1.4 var(--f);color:var(--ink);background:var(--bg);display:grid;grid-template-columns:1fr 340px}
 #stage{position:relative;min-height:0;overflow:hidden}
-svg{width:100%;height:100%;display:block;cursor:grab;touch-action:none}svg:active{cursor:grabbing}
+#map{width:100%;height:100%;display:block;cursor:grab;touch-action:none}#map:active{cursor:grabbing}
+.legend-icon{display:inline-block;vertical-align:middle;width:26px;height:26px}.legend-icon.promessas{height:14px}
 .dist{fill:var(--land);stroke:var(--bound);stroke-width:1px;vector-effect:non-scaling-stroke}
 .urb{stroke:none}.nb{fill:var(--nb);stroke:var(--nbl);stroke-width:1px;vector-effect:non-scaling-stroke;stroke-linejoin:round}.sil{fill:none;stroke:var(--ink);stroke-width:1.8px;vector-effect:non-scaling-stroke;stroke-linejoin:round;pointer-events:none}
 .dl{fill:var(--lbl);font:italic 700 16px var(--f);text-anchor:middle;text-transform:uppercase;pointer-events:none}
@@ -27,7 +28,7 @@ g.c text{fill:#fff;font:600 10px var(--f);text-anchor:middle;dominant-baseline:c
 g.c.pr circle{fill:var(--bg);fill-opacity:1;stroke:var(--ink);stroke-width:1.6}
 g.c:focus-visible{outline:none}g.c:focus-visible circle{stroke:var(--focus);stroke-width:3}
 .ring{fill:none;stroke:var(--mute);stroke-width:.7}
-#tip{position:absolute;pointer-events:none;background:var(--ink);color:var(--bg);padding:4px 9px;border-radius:5px;font-size:12px;opacity:0;max-width:240px}
+#tip{position:absolute;pointer-events:none;background:var(--ink);color:var(--bg);padding:11px 13px;border-radius:8px;font-size:12px;line-height:1.45;opacity:0;width:min(280px,calc(100vw - 28px));max-width:280px;box-shadow:0 5px 22px #0003;z-index:5;transition:opacity .12s ease}#tip .tip-title{font-weight:600;font-size:13px;line-height:1.3;margin-bottom:7px}#tip .tip-row{display:flex;justify-content:space-between;gap:12px;padding:2px 0;border-top:1px solid color-mix(in srgb,var(--bg) 22%,transparent)}#tip .tip-label{opacity:.72}#tip .tip-value{text-align:right;font-weight:500}#tip .tip-status{margin-top:7px;padding-top:6px;border-top:1px solid color-mix(in srgb,var(--bg) 22%,transparent);font-style:italic}
 #reset{position:absolute;left:12px;top:12px;background:var(--bg);color:var(--ink);border:1px solid var(--line);border-radius:6px;padding:6px 11px;font:500 12px var(--f);cursor:pointer}
 aside{border-left:1px solid var(--line);overflow:auto;padding:18px 20px 26px}
 h1{font:600 18px/1.25 var(--f);margin:0 0 12px}
@@ -55,8 +56,8 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--focus);outline-
   <label class="row"><input type="checkbox" id="tB"> Colorir área urbanizada por situação</label>
   <div id="legU" hidden></div>
   <h2>Legenda</h2><div id="list"></div>
-  <div style="margin-top:12px;font-size:11px;text-transform:uppercase"><svg width="26" height="14" style="vertical-align:middle"><circle cx="13" cy="7" r="6" fill="none" stroke="currentColor" stroke-width="1.6"/></svg> Promessas habitacionais</div>
-  <div style="margin-top:8px;font-size:11px;text-transform:uppercase"><svg width="26" height="26" style="vertical-align:middle"><g class="ring"><circle cx="13" cy="13" r="12"/><circle cx="13" cy="13" r="9"/><circle cx="13" cy="13" r="6"/></g><circle cx="13" cy="13" r="1.8" fill="currentColor"/></svg> Centro de Petrópolis</div>
+  <div style="margin-top:12px;font-size:11px;text-transform:uppercase"><svg class="legend-icon promessas" width="26" height="14" viewBox="0 0 26 14" aria-hidden="true"><circle cx="13" cy="7" r="6" fill="none" stroke="currentColor" stroke-width="1.6"/></svg> Promessas habitacionais</div>
+  <div style="margin-top:8px;font-size:11px;text-transform:uppercase"><svg class="legend-icon centro" width="26" height="26" viewBox="0 0 26 26" aria-hidden="true"><g class="ring"><circle cx="13" cy="13" r="12"/><circle cx="13" cy="13" r="9"/><circle cx="13" cy="13" r="6"/></g><circle cx="13" cy="13" r="1.8" fill="currentColor"/></svg> Centro de Petrópolis</div>
   <h2>Quantidade de UHs</h2><div class="sizes" id="sizes"></div>
   <h2>Década de implantação</h2><div class="decs" id="decs"></div>
   <div id="ficha"></div>
@@ -102,12 +103,23 @@ function render(){
   const cs=gC.selectAll("g.c").data(C.filter(c=>!hid.has(c.d)),d=>d.id).join(e=>{const n=e.append("g").attr("tabindex",0);n.append("circle");n.append("text");return n});
   cs.attr("class",d=>"c"+(d.pr?" pr":"")+(d.id===sel?" sel":"")).attr("aria-label",d=>d.n)
     .on("click",(e,d)=>show(d.id)).on("keydown",(e,d)=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();show(d.id)}})
-    .on("pointermove",(e,d)=>tip(e,(d.pr?"":P2(d.num)+". ")+d.n)).on("pointerleave",()=>tip());
+    .on("pointermove",(e,d)=>tip(e,d)).on("pointerleave",()=>tip());
   cs.select("circle").attr("r",d=>d.pr?7:rad(d.uh,F)).style("fill",d=>d.pr?null:DEC[d.d]);
   cs.select("text").text(d=>d.pr?"":P2(d.num)).style("font-size",(9.5*F)+"px");
   scale();grid();
 }
-function tip(e,t){const el=$("tip");if(!t){el.style.opacity=0;return}const b=$("stage").getBoundingClientRect();el.textContent=t;el.style.left=(e.clientX-b.left+12)+"px";el.style.top=(e.clientY-b.top+12)+"px";el.style.opacity=1}
+function tip(e,c){
+  const el=$("tip");
+  if(!c){el.style.opacity=0;return}
+  const esc=v=>String(v??"").replace(/[&<>"']/g,ch=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[ch]));
+  const row=(label,value)=>`<div class="tip-row"><span class="tip-label">${label}</span><span class="tip-value">${esc(value)}</span></div>`;
+  el.innerHTML=`<div class="tip-title">${c.pr?"":P2(c.num)+". "}${esc(c.n)}</div>${row("Unidades habitacionais",c.uh)}${row("Década de implantação",c.d)}${row("Agente",c.o)}${c.s?`<div class="tip-status">${esc(c.s)}</div>`:""}`;
+  const b=$("stage").getBoundingClientRect();
+  const x=e.clientX-b.left+14,y=e.clientY-b.top+14;
+  el.style.left=Math.min(x,Math.max(8,b.width-el.offsetWidth-8))+"px";
+  el.style.top=Math.min(y,Math.max(8,b.height-el.offsetHeight-8))+"px";
+  el.style.opacity=1;
+}
 function show(id){
   sel=id;const c=C.find(x=>x.id===id);
   $("ficha").innerHTML=`<div class="card"><h3>${c.n}</h3><dl><dt>Unidades</dt><dd>${c.uh}</dd><dt>Década</dt><dd>${c.d}</dd><dt>Agente</dt><dd>${c.o}</dd>${c.s?`<dt>Situação</dt><dd>${c.s}</dd>`:""}</dl></div>`;
