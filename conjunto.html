@@ -58,6 +58,7 @@ section>p{max-width:760px;margin:0 0 12px}
 .leitura .aviso{margin-top:8px;font-size:12px;color:var(--mute)}
 code{background:var(--panel2);padding:1px 6px;border-radius:3px;font-size:12px}
 .leaflet-container{font-family:Poppins,sans-serif}
+.leaflet-tile-pane{filter:invert(1) hue-rotate(180deg) brightness(.82) contrast(.92) saturate(.6)}
 .leaflet-popup-content-wrapper,.leaflet-popup-tip{background:var(--panel);color:var(--ink)}
 .leaflet-popup-content{font-size:13px;line-height:1.5}
 .rotulo{background:var(--rose);color:#1c1d21;border:0;font-weight:600;font-size:12px;box-shadow:none}
@@ -114,6 +115,7 @@ const painel=CATEGORIAS.map(k=>`<h3><i style="background:${k.cor}"></i><span>${k
   CAMADAS.filter(l=>l.cat===k.id).map(l=>`<button class="tg" data-l="${l.id}" aria-pressed="false" style="--cor:${k.cor}"><span class="sw"></span>${esc(l.nome)}<em></em></button>`).join('')).join('');
 
 const fotos=(c.fotografias&&c.fotografias.length?c.fotografias:[1,2,3].map(n=>`fotos/${c.id}-${n}.jpg`)).map(f=>typeof f==='string'?{src:f}:f);
+const analises=(c.analises&&c.analises.length?c.analises:[1,2].map(n=>`analises/${c.id}-${n}.png`)).map(f=>typeof f==='string'?{src:f}:f);
 const docs=c.documentosNoticias||[];
 const fontes=c.fontes||[];
 
@@ -126,7 +128,7 @@ root.innerHTML=`
  <div class="stat"><small>Agente / programa</small><strong>${esc(c.programa)}</strong></div>
  <div class="stat"><small>Situação</small><strong>${esc(c.situacao)}</strong></div>
 </div>
-<nav class="sec" aria-label="Seções da ficha"><a href="#historico">Histórico</a><a href="#mapa">Mapa e camadas</a><a href="#caracteristicas">Características</a><a href="#diaspora">Diáspora das águas</a><a href="#fotos">Fotografias</a><a href="#documentos">Documentos</a><a href="#fontes">Fontes</a></nav>
+<nav class="sec" aria-label="Seções da ficha"><a href="#historico">Histórico</a><a href="#mapa">Mapa e camadas</a><a href="#analises">Mapas do QGIS</a><a href="#caracteristicas">Características</a><a href="#diaspora">Diáspora das águas</a><a href="#fotos">Fotografias</a><a href="#documentos">Documentos</a><a href="#fontes">Fontes</a></nav>
 
 <section id="historico"><h2>Histórico e relação com os desastres</h2><p>${esc(c.historico)}</p><p><b>Origem das famílias:</b> ${esc(c.origem)}</p></section>
 
@@ -136,6 +138,11 @@ root.innerHTML=`
 <div class="painel"><div class="acoes"><button type="button" id="todas">Ligar todas</button><button type="button" id="nenhuma">Desligar todas</button></div>${painel}</div></div>
 <div class="leituras" id="leituras" aria-live="polite"></div>
 <p class="empty" style="margin-top:14px">A posição do conjunto usa as coordenadas já cadastradas no mapa digital original. Confira em campo ou no QGIS antes de usar tecnicamente.</p></section>
+
+<section id="analises"><h2>Mapas de análise do QGIS</h2>
+<p>Mapas produzidos no QGIS para este conjunto, como imagem. Servem para análises que ainda não viraram camada interativa.</p>
+<div class="fotos">${analises.map(f=>`<figure class="foto"><div class="slot">Mapa de análise<img src="${esc(f.src)}" alt="${esc(f.legenda||'Mapa de análise de '+c.nome)}" loading="lazy" style="object-fit:contain;background:#15161a" onerror="this.remove()"></div>${f.legenda?`<figcaption>${esc(f.legenda)}</figcaption>`:''}</figure>`).join('')}</div>
+<p class="empty" style="margin-top:12px">Para preencher, exporte o mapa do QGIS em PNG e salve na pasta <code>analises/</code> com os nomes <code>${c.id}-1.png</code>, <code>${c.id}-2.png</code>, ou liste-os em <code>analises</code> no <code>dados.js</code> com legenda.</p></section>
 
 <section id="caracteristicas"><h2>Características habitacionais</h2>
 <dl class="facts"><dt>Tipologia / configuração</dt><dd>${esc(c.tipologia)}</dd><dt>Programa e agentes</dt><dd>${esc(c.programa)}</dd><dt>Interlocução no inventário</dt><dd>${esc(c.interlocucao)}</dd><dt>Marco / entrega</dt><dd>${esc(c.marco)}</dd></dl></section>
@@ -160,7 +167,7 @@ root.innerHTML=`
 
 /* ---------- mapa ---------- */
 const map=L.map('map',{scrollWheelZoom:false}).setView([c.latitude,c.longitude],15);
-L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',{attribution:'© OpenStreetMap · © CARTO',maxZoom:19,subdomains:'abcd'}).addTo(map);
+L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',{attribution:'© OpenStreetMap',maxZoom:19}).addTo(map);
 L.circleMarker([c.latitude,c.longitude],{radius:10,color:'#fff',weight:2,fillColor:'#e8a5bb',fillOpacity:1}).addTo(map)
  .bindTooltip(esc(c.nome),{permanent:true,direction:'top',offset:[0,-10],className:'rotulo'});
 
