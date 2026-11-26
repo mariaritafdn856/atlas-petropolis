@@ -1,15 +1,202 @@
-<!DOCTYPE html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Atlas de reassentamentos habitacionais | Petrópolis</title><link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet"><style>
-:root{--ink:#242424;--muted:#686868;--line:#dedbd5;--paper:#fff;--soft:#f5f3ef;--accent:#8b5e45;--serif:Georgia,serif}*{box-sizing:border-box}body{margin:0;background:var(--paper);color:var(--ink);font:14px/1.72 Poppins,Arial,sans-serif}.wrap{max-width:1100px;margin:auto;padding:22px 28px 64px}.top{display:flex;justify-content:space-between;align-items:center;gap:15px;border-bottom:1px solid var(--line);padding:0 0 16px}.brand{font-size:11px;letter-spacing:.11em;text-transform:uppercase;color:var(--muted)}a{color:var(--accent)}.back{border:1px solid var(--line);border-radius:3px;padding:7px 12px;text-decoration:none;font-size:12px}.eyebrow{margin:34px 0 6px;color:var(--accent);font-size:11px;text-transform:uppercase;letter-spacing:.13em}h1{font:500 clamp(28px,5vw,44px)/1.12 var(--serif);margin:0 0 10px}.sub{color:var(--muted);margin:0 0 22px}.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:9px;margin:24px 0}.stat{background:var(--soft);padding:13px 15px;min-height:84px}.stat small{display:block;color:var(--muted);font-size:10px;text-transform:uppercase;letter-spacing:.08em}.stat strong{display:block;font-size:15px;font-weight:600;margin-top:4px}.section{border-top:1px solid var(--line);padding:22px 0}.section h2{font:500 23px/1.2 var(--serif);margin:0 0 12px}.section p{max-width:850px;margin:0 0 10px}.facts{display:grid;grid-template-columns:190px 1fr;gap:7px 18px;max-width:900px}.facts b{font-weight:500;color:var(--muted)}.tags{display:flex;gap:7px;flex-wrap:wrap}.tag{border:1px solid var(--line);padding:4px 8px;font-size:11px;color:var(--muted)}.notice{background:var(--soft);padding:13px 15px;color:var(--muted);font-size:12px}.map{width:100%;height:330px;border:1px solid var(--line)}.empty{color:var(--muted);font-size:12px;border-left:2px solid var(--line);padding:8px 12px}.footer{border-top:1px solid var(--line);padding-top:15px;margin-top:25px;color:var(--muted);font-size:11px}@media(max-width:680px){.wrap{padding:16px}.stats{grid-template-columns:repeat(2,1fr)}.facts{grid-template-columns:1fr;gap:0}.facts b{margin-top:8px}.top{align-items:flex-start}}
-</style></head><body><main class="wrap"><header class="top"><div class="brand">Atlas de reassentamentos habitacionais · Petrópolis</div><a class="back" href="index.html">← Voltar ao mapa</a></header><div id="content"><p>Carregando…</p></div><footer class="footer">Fonte principal: TFG “Da Cidade Imperial à Diáspora das Águas”. Informações não encontradas no inventário são identificadas como lacunas e não foram completadas por suposição.</footer></main><script src="dados.js"></script><script>
-const id=Number(new URLSearchParams(location.search).get('id'));const c=CONJUNTOS.find(x=>x.id===id);const root=document.getElementById('content');const esc=s=>String(s??'').replace(/[&<>"']/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
-const list=a=>a&&a.length?'<ul>'+a.map(x=>'<li>'+esc(x)+'</li>').join('')+'</ul>':'<div class="empty">O TFG enviado não apresenta registros específicos nesta seção. O conteúdo pode ser complementado com documentação da pesquisa.</div>';
-if(!c){root.innerHTML='<h1>Conjunto não encontrado</h1><a href="index.html">Voltar ao mapa</a>';}else{document.title=c.nome+' | Atlas de reassentamentos';let lat=c.latitude,lon=c.longitude,d=.008,bbox=[lon-d,lat-d,lon+d,lat+d].join('%2C');root.innerHTML=`<p class="eyebrow">Ficha do inventário · ${esc(c.marco)}</p><h1>${esc(c.nome)}</h1><p class="sub">${esc(c.localizacao)} · Petrópolis, Rio de Janeiro</p><div class="stats"><div class="stat"><small>Unidades habitacionais</small><strong>${esc(c.unidades)}</strong></div><div class="stat"><small>Marco temporal</small><strong>${esc(c.marco)}</strong></div><div class="stat"><small>Agente / programa</small><strong>${esc(c.programa)}</strong></div><div class="stat"><small>Situação</small><strong>${esc(c.situacao)}</strong></div></div>
-<section class="section"><h2>Histórico e relação com os desastres</h2><p>${esc(c.historico)}</p><p><b>Origem / relação com desastre:</b> ${esc(c.origem)}</p></section>
-<section class="section"><h2>Características habitacionais</h2><div class="facts"><b>Tipologia / configuração</b><span>${esc(c.tipologia)}</span><b>Programa e agentes</b><span>${esc(c.programa)}</span><b>Interlocução registrada no inventário</b><span>${esc(c.interlocucao)}</span><b>Marco / entrega</b><span>${esc(c.marco)}</span></div></section>
-<section class="section"><h2>Inserção urbana e localização</h2><p>${esc(c.localizacao)}</p><p class="empty">O mapa abaixo utiliza as coordenadas que já estavam cadastradas no mapa digital original. Elas funcionam como referência cartográfica e devem ser conferidas em campo ou em base georreferenciada antes de uso técnico.</p><iframe class="map" title="Localização de ${esc(c.nome)}" loading="lazy" src="https://www.openstreetmap.org/export/embed.html?bbox=${bbox}&layer=mapnik&marker=${lat}%2C${lon}"></iframe><p><a href="https://www.openstreetmap.org/?mlat=${lat}&mlon=${lon}#map=16/${lat}/${lon}" target="_blank" rel="noopener">Abrir mapa em tela cheia</a></p></section>
-<section class="section"><h2>Dados socioespaciais</h2><p>Informações territoriais e habitacionais identificadas no inventário:</p>${list(c.dadosSocioespaciais)}<div class="notice">O TFG propõe investigar renda, raça/cor, saneamento, áreas de risco, hidrografia, declividade, cobertura vegetal e desmatamento. Também indica que o Índice de Vulnerabilidade Socioespacial está em desenvolvimento. Esses indicadores não foram presumidos nesta ficha.</div></section>
-<section class="section"><h2>Deslocamentos e trajetórias de vida</h2><p>${esc(c.origem)}</p><p class="empty">A interlocução indicada no inventário é: ${esc(c.interlocucao)}. O TFG não traz, na tabela-síntese, depoimentos ou trajetórias individuais detalhadas para esta ficha.</p></section>
-<section class="section"><h2>Fotografias</h2><div class="empty">O material do TFG enviado não contém fotografias específicas deste conjunto. A seção fica preparada para receber imagens de campo, com legenda, autoria e data.</div></section>
-<section class="section"><h2>Documentos e notícias</h2><div class="empty">Nenhum documento ou notícia individualizado para este empreendimento na tabela-síntese do TFG. Inserir links ou arquivos apenas após conferência da fonte.</div></section>
-<section class="section"><h2>Fontes e referências</h2><ul><li>TFG “Da Cidade Imperial à Diáspora das Águas”, p. 7–9: cronologia das respostas habitacionais e contexto histórico.</li><li>TFG “Da Cidade Imperial à Diáspora das Águas”, p. 11: inventário de localização, marco/entrega, unidades, tipologia, agentes, origem/relação com desastre, situação e interlocução.</li><li>TFG “Da Cidade Imperial à Diáspora das Águas”, p. 15: categorias de análise propostas para o Atlas.</li></ul></section>`;}
-</script></body></html>
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Atlas de reassentamentos habitacionais | Petrópolis</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Dancing+Script:wght@600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.css">
+<style>
+:root{--bg:#1c1d21;--panel:#25262c;--panel2:#2d2e35;--line:#3a3b44;--ink:#ece8e4;--mute:#a7a3ab;--rose:#e8a5bb;--blue:#5f86c9;color-scheme:dark}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.7 Poppins,system-ui,sans-serif}
+a{color:var(--rose)}
+.wrap{max-width:1180px;margin:auto;padding:0 28px 64px}
+.top{display:flex;justify-content:space-between;align-items:center;gap:16px;padding:20px 0;border-bottom:1px solid var(--line)}
+.brand{color:var(--mute);font-size:12px}
+.back{border:1px solid var(--line);border-radius:4px;padding:7px 13px;text-decoration:none;font-size:12px;color:var(--ink)}
+.back:hover,.back:focus-visible{border-color:var(--rose);color:var(--rose)}
+h1{font:600 clamp(30px,5.4vw,56px)/1.05 Poppins,sans-serif;letter-spacing:-.03em;margin:44px 0 10px}
+.sub{color:var(--mute);margin:0 0 26px;font-size:15px}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:0 0 8px}
+.stat{background:var(--panel);border-left:3px solid var(--rose);padding:13px 16px}
+.stat small{display:block;color:var(--mute);font-size:12px}
+.stat strong{display:block;font-weight:500;font-size:15px;margin-top:2px}
+.sec{position:sticky;top:0;z-index:500;display:flex;gap:4px;overflow-x:auto;background:rgba(28,29,33,.94);backdrop-filter:blur(8px);border-bottom:1px solid var(--line);margin:26px 0 0;padding:8px 0}
+.sec a{white-space:nowrap;color:var(--mute);text-decoration:none;font-size:13px;padding:6px 12px;border-radius:4px}
+.sec a:hover,.sec a:focus-visible{background:var(--panel);color:var(--ink)}
+section{padding:40px 0 8px;scroll-margin-top:52px}
+h2{font:600 26px/1.2 Poppins,sans-serif;letter-spacing:-.02em;margin:0 0 14px}
+section>p{max-width:760px;margin:0 0 12px}
+.empty{color:var(--mute);font-size:13px;border:1px dashed var(--line);border-radius:4px;padding:14px 16px;max-width:760px}
+.facts{display:grid;grid-template-columns:210px 1fr;gap:10px 22px;max-width:900px;margin:0}
+.facts dt{color:var(--mute)}.facts dd{margin:0}
+/* mapa */
+.mapgrid{display:grid;grid-template-columns:1fr 330px;gap:14px;align-items:start}
+#map{height:560px;border:1px solid var(--line);border-radius:4px;background:#15161a}
+.painel{background:var(--panel);border:1px solid var(--line);border-radius:4px;padding:14px;max-height:560px;overflow-y:auto}
+.painel h3{font:600 13px/1.35 Poppins,sans-serif;margin:16px 0 8px;display:flex;gap:8px;align-items:baseline}
+.painel h3:first-of-type{margin-top:4px}
+.painel h3 i{flex:none;width:10px;height:10px;border-radius:50%;transform:translateY(1px)}
+.acoes{display:flex;gap:8px;margin-bottom:6px}
+.acoes button{flex:1;background:none;border:1px solid var(--line);color:var(--mute);border-radius:4px;padding:5px;font:inherit;font-size:12px;cursor:pointer}
+.acoes button:hover{color:var(--ink);border-color:var(--mute)}
+.tg{display:flex;align-items:center;gap:10px;width:100%;text-align:left;background:var(--panel2);border:1px solid transparent;color:var(--mute);border-radius:4px;padding:7px 10px;margin:0 0 5px;font:inherit;font-size:13px;cursor:pointer}
+.tg .sw{flex:none;width:28px;height:16px;border-radius:9px;border:1.5px solid var(--cor);position:relative}
+.tg .sw::after{content:"";position:absolute;top:2px;left:2px;width:9px;height:9px;border-radius:50%;background:var(--cor);opacity:.45;transition:transform .15s,opacity .15s}
+.tg[aria-pressed=true]{color:var(--ink);border-color:var(--cor)}
+.tg[aria-pressed=true] .sw::after{transform:translateX(12px);opacity:1}
+.tg em{margin-left:auto;font-style:normal;font-size:11px;color:var(--mute)}
+.tg:focus-visible,.acoes button:focus-visible{outline:2px solid var(--rose);outline-offset:2px}
+.leituras{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:10px;margin-top:14px}
+.leitura{background:var(--panel);border-left:3px solid var(--cor,var(--line));padding:12px 16px}
+.leitura h4{margin:0 0 4px;font-size:14px;font-weight:600}
+.leitura p{margin:0;font-size:13px;color:#cfcbd2}
+.leitura .aviso{margin-top:8px;font-size:12px;color:var(--mute)}
+code{background:var(--panel2);padding:1px 6px;border-radius:3px;font-size:12px}
+.leaflet-container{font-family:Poppins,sans-serif}
+.leaflet-popup-content-wrapper,.leaflet-popup-tip{background:var(--panel);color:var(--ink)}
+.leaflet-popup-content{font-size:13px;line-height:1.5}
+.rotulo{background:var(--rose);color:#1c1d21;border:0;font-weight:600;font-size:12px;box-shadow:none}
+.rotulo::before{border-top-color:var(--rose)!important}
+/* diáspora */
+.diaspora{margin-top:40px;background:linear-gradient(180deg,#232a3d,var(--panel));border:1px solid #34405c;border-radius:6px;padding:34px 30px 30px}
+.diaspora h2{font-size:34px;margin-bottom:6px}
+.script{font:600 1.5em/1 "Dancing Script",cursive;color:#8fa9e0;letter-spacing:0}
+.diaspora>p{color:#cfd6ea}
+.dgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:12px;margin-top:20px}
+.dcard{background:rgba(28,29,33,.55);border:1px solid #34405c;border-radius:4px;padding:14px 16px}
+.dcard h3{margin:0 0 6px;font-size:14px}
+.dcard p{margin:0;font-size:13px;color:#cfd6ea}
+.dcard .vazio{color:var(--mute)}
+/* fotos */
+.fotos{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px}
+.foto{margin:0}
+.slot{position:relative;aspect-ratio:4/3;background:var(--panel);border:1px dashed var(--line);border-radius:4px;overflow:hidden;display:grid;place-items:center;text-align:center;color:var(--mute);font-size:12px;padding:12px}
+.slot img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.foto figcaption{font-size:12px;color:var(--mute);padding-top:6px}
+ul.lista{margin:0;padding-left:20px;max-width:800px}
+ul.lista li{margin-bottom:6px}
+.nav{display:flex;justify-content:space-between;gap:12px;border-top:1px solid var(--line);margin-top:48px;padding-top:18px}
+.nav a{text-decoration:none;color:var(--ink);border:1px solid var(--line);border-radius:4px;padding:10px 14px;font-size:13px;max-width:48%}
+.nav a:hover{border-color:var(--rose)}
+.footer{color:var(--mute);font-size:12px;margin-top:22px}
+@media(max-width:880px){.mapgrid{grid-template-columns:1fr}.painel{max-height:none}#map{height:440px}.stats{grid-template-columns:repeat(2,1fr)}.facts{grid-template-columns:1fr;gap:0}.facts dt{margin-top:10px}.wrap{padding:0 16px 48px}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.tg .sw::after{transition:none}}
+</style>
+</head>
+<body>
+<main class="wrap">
+<header class="top"><div class="brand">Atlas de reassentamentos habitacionais em Petrópolis</div><a class="back" href="index.html">Voltar ao mapa geral</a></header>
+<div id="content"><p>Carregando…</p></div>
+<p class="footer">Fonte principal: TFG “Da Cidade Imperial à Diáspora das Águas”. O que não consta no inventário aparece como lacuna e não foi completado por suposição.</p>
+</main>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.js"></script>
+<script src="dados.js"></script>
+<script src="camadas.js"></script>
+<script>
+const id=Number(new URLSearchParams(location.search).get('id'));
+const c=CONJUNTOS.find(x=>x.id===id);
+const root=document.getElementById('content');
+const esc=s=>String(s??'').replace(/[&<>"']/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
+const vazio=t=>`<div class="empty">${t}</div>`;
+
+if(!c){root.innerHTML='<h1>Conjunto não encontrado</h1><p><a href="index.html">Voltar ao mapa geral</a></p>';}
+else{
+document.title=c.nome+' | Atlas de reassentamentos';
+const ids=CONJUNTOS.map(x=>x.id),i=ids.indexOf(c.id),ant=CONJUNTOS[i-1],prox=CONJUNTOS[i+1];
+const corCat=k=>(CATEGORIAS.find(x=>x.id===k)||{}).cor;
+
+const painel=CATEGORIAS.map(k=>`<h3><i style="background:${k.cor}"></i><span>${k.n}. ${esc(k.nome)}</span></h3>`+
+  CAMADAS.filter(l=>l.cat===k.id).map(l=>`<button class="tg" data-l="${l.id}" aria-pressed="false" style="--cor:${k.cor}"><span class="sw"></span>${esc(l.nome)}<em></em></button>`).join('')).join('');
+
+const fotos=(c.fotografias&&c.fotografias.length?c.fotografias:[1,2,3].map(n=>`fotos/${c.id}-${n}.jpg`)).map(f=>typeof f==='string'?{src:f}:f);
+const docs=c.documentosNoticias||[];
+const fontes=c.fontes||[];
+
+root.innerHTML=`
+<h1>${esc(c.nome)}</h1>
+<p class="sub">${esc(c.localizacao)}, Petrópolis (RJ)</p>
+<div class="stats">
+ <div class="stat"><small>Unidades habitacionais</small><strong>${esc(c.unidades)}</strong></div>
+ <div class="stat"><small>Marco temporal</small><strong>${esc(c.marco)}</strong></div>
+ <div class="stat"><small>Agente / programa</small><strong>${esc(c.programa)}</strong></div>
+ <div class="stat"><small>Situação</small><strong>${esc(c.situacao)}</strong></div>
+</div>
+<nav class="sec" aria-label="Seções da ficha"><a href="#historico">Histórico</a><a href="#mapa">Mapa e camadas</a><a href="#caracteristicas">Características</a><a href="#diaspora">Diáspora das águas</a><a href="#fotos">Fotografias</a><a href="#documentos">Documentos</a><a href="#fontes">Fontes</a></nav>
+
+<section id="historico"><h2>Histórico e relação com os desastres</h2><p>${esc(c.historico)}</p><p><b>Origem das famílias:</b> ${esc(c.origem)}</p></section>
+
+<section id="mapa"><h2>Mapa e camadas de análise</h2>
+<p>Ligue e desligue as camadas para ler o território do conjunto. Cada categoria segue as cinco categorias do Atlas. Abaixo do mapa, uma nota explica o que cada camada ligada permite observar.</p>
+<div class="mapgrid"><div id="map" role="region" aria-label="Mapa de ${esc(c.nome)}"></div>
+<div class="painel"><div class="acoes"><button type="button" id="todas">Ligar todas</button><button type="button" id="nenhuma">Desligar todas</button></div>${painel}</div></div>
+<div class="leituras" id="leituras" aria-live="polite"></div>
+<p class="empty" style="margin-top:14px">A posição do conjunto usa as coordenadas já cadastradas no mapa digital original. Confira em campo ou no QGIS antes de usar tecnicamente.</p></section>
+
+<section id="caracteristicas"><h2>Características habitacionais</h2>
+<dl class="facts"><dt>Tipologia / configuração</dt><dd>${esc(c.tipologia)}</dd><dt>Programa e agentes</dt><dd>${esc(c.programa)}</dd><dt>Interlocução no inventário</dt><dd>${esc(c.interlocucao)}</dd><dt>Marco / entrega</dt><dd>${esc(c.marco)}</dd></dl></section>
+
+<div class="diaspora" id="diaspora"><h2>Diáspora das <span class="script">águas</span></h2>
+<p>Espaço reservado para as trajetórias das famílias reassentadas: de onde vieram, o que se rompeu e o que permaneceu.</p>
+<div class="dgrid">
+ <div class="dcard"><h3>Origem e destino</h3><p>${esc(c.origem)}</p></div>
+ <div class="dcard"><h3>Rupturas territoriais</h3><p class="vazio">A preencher.</p></div>
+ <div class="dcard"><h3>Redes de pertencimento</h3><p class="vazio">A preencher.</p></div>
+ <div class="dcard"><h3>Memórias e experiências</h3><p class="vazio">Espaço para trechos de entrevistas e relatos. Interlocução registrada: ${esc(c.interlocucao)}.</p></div>
+</div></div>
+
+<section id="fotos"><h2>Fotografias</h2><div class="fotos">${fotos.map(f=>`<figure class="foto"><div class="slot">Foto de campo<img src="${esc(f.src)}" alt="${esc(f.legenda||'Fotografia de '+c.nome)}" loading="lazy" onerror="this.remove()"></div>${f.legenda?`<figcaption>${esc(f.legenda)}</figcaption>`:''}</figure>`).join('')}</div>
+<p class="empty" style="margin-top:12px">Para preencher, salve as imagens na pasta <code>fotos/</code> com os nomes <code>${c.id}-1.jpg</code>, <code>${c.id}-2.jpg</code>, <code>${c.id}-3.jpg</code>, ou liste-as em <code>fotografias</code> no <code>dados.js</code> com legenda, autoria e data.</p></section>
+
+<section id="documentos"><h2>Documentos e notícias</h2>${docs.length?'<ul class="lista">'+docs.map(d=>typeof d==='string'?`<li>${esc(d)}</li>`:`<li><a href="${esc(d.url)}" target="_blank" rel="noopener">${esc(d.titulo||d.url)}</a></li>`).join('')+'</ul>':vazio('Nenhum documento ou notícia cadastrado para este conjunto. Insira links só depois de conferir a fonte.')}</section>
+
+<section id="fontes"><h2>Fontes e referências</h2>${fontes.length?'<ul class="lista">'+fontes.map(f=>`<li>${esc(f)}</li>`).join('')+'</ul>':vazio('Sem fontes cadastradas.')}</section>
+
+<div class="nav"><span>${ant?`<a href="conjunto.html?id=${ant.id}">Anterior: ${esc(ant.nome)}</a>`:''}</span><span>${prox?`<a href="conjunto.html?id=${prox.id}">Próximo: ${esc(prox.nome)}</a>`:''}</span></div>`;
+
+/* ---------- mapa ---------- */
+const map=L.map('map',{scrollWheelZoom:false}).setView([c.latitude,c.longitude],15);
+L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',{attribution:'© OpenStreetMap · © CARTO',maxZoom:19,subdomains:'abcd'}).addTo(map);
+L.circleMarker([c.latitude,c.longitude],{radius:10,color:'#fff',weight:2,fillColor:'#e8a5bb',fillOpacity:1}).addTo(map)
+ .bindTooltip(esc(c.nome),{permanent:true,direction:'top',offset:[0,-10],className:'rotulo'});
+
+const G={},S={};
+CAMADAS.forEach(l=>{G[l.id]=L.layerGroup();S[l.id]={on:false,dados:l.tipo?true:null}});
+
+const DEC={1980:'#a68a6a',1990:'#9a6fb0',2000:'#d0617a',2010:'#5fb07e',2020:'#6f86e0'};
+CONJUNTOS.filter(x=>x.id!==c.id).forEach(x=>L.circleMarker([x.latitude,x.longitude],{radius:4+Math.sqrt(Number(x.unidades)||20)*.45,color:'#1c1d21',weight:1,fillColor:DEC[x.decada]||'#999',fillOpacity:.9})
+ .bindPopup(`<b>${esc(x.nome)}</b><br>${esc(x.unidades)} unidades · ${esc(x.marco)}<br><a href="conjunto.html?id=${x.id}">Abrir ficha</a>`).addTo(G.outros));
+[[500,'500 m'],[1000,'1 km']].forEach(([r,t])=>L.circle([c.latitude,c.longitude],{radius:r,color:'#8db6e8',weight:1,dashArray:'4 4',fill:false}).bindTooltip(t,{sticky:true}).addTo(G.raio));
+
+CAMADAS.filter(l=>l.arquivo).forEach(async l=>{
+ const e=l.estilo||{};
+ try{
+  const r=await fetch(l.arquivo.replace('{id}',c.id));if(!r.ok)throw 0;
+  const gj=await r.json();
+  G[l.id].addLayer(L.geoJSON(gj,{style:()=>e,
+   pointToLayer:(f,ll)=>L.circleMarker(ll,{radius:e.radius||5,color:e.color,fillColor:e.color,fillOpacity:.8,weight:1}),
+   onEachFeature:(f,ly)=>{const p=f.properties||{},t=p.nome||p.name;if(t)ly.bindPopup('<b>'+esc(t)+'</b>'+(p.descricao?'<br>'+esc(p.descricao):''))}}));
+  S[l.id].dados=true;
+ }catch(_){S[l.id].dados=false}
+ atualiza();
+});
+
+function atualiza(){
+ document.querySelectorAll('.tg').forEach(b=>{const l=S[b.dataset.l];b.setAttribute('aria-pressed',l.on);b.querySelector('em').textContent=l.dados===false?'sem dados':''});
+ const ativas=CAMADAS.filter(l=>S[l.id].on);
+ document.getElementById('leituras').innerHTML=ativas.length?ativas.map(l=>`<div class="leitura" style="--cor:${corCat(l.cat)}"><h4>${esc(l.nome)}</h4><p>${esc(l.leitura)}</p>${S[l.id].dados===false?`<p class="aviso">Ainda sem dados. Exporte do QGIS em GeoJSON e salve como <code>${esc(l.arquivo.replace('{id}',c.id))}</code> para a camada aparecer no mapa.</p>`:''}</div>`).join(''):vazio('Ligue uma camada para ver o que ela permite ler neste conjunto.');
+}
+function liga(k,on){S[k].on=on;on?G[k].addTo(map):map.removeLayer(G[k])}
+document.querySelectorAll('.tg').forEach(b=>b.onclick=()=>{liga(b.dataset.l,!S[b.dataset.l].on);atualiza()});
+document.getElementById('todas').onclick=()=>{CAMADAS.forEach(l=>liga(l.id,true));atualiza()};
+document.getElementById('nenhuma').onclick=()=>{CAMADAS.forEach(l=>liga(l.id,false));atualiza()};
+CAMADAS.filter(l=>l.ligada).forEach(l=>liga(l.id,true));
+atualiza();
+}
+</script>
+</body>
+</html>
