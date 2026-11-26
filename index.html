@@ -102,7 +102,7 @@ function render(){
   C.forEach(d=>{[d.x,d.y]=proj(d.ll)});
   const cs=gC.selectAll("g.c").data(C.filter(c=>!hid.has(c.d)),d=>d.id).join(e=>{const n=e.append("g").attr("tabindex",0);n.append("circle");n.append("text");return n});
   cs.attr("class",d=>"c"+(d.pr?" pr":"")+(d.id===sel?" sel":"")).attr("aria-label",d=>d.n)
-    .on("click",(e,d)=>show(d.id)).on("keydown",(e,d)=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();show(d.id)}})
+    .on("click",(e,d)=>{e.preventDefault();window.location.href=`conjunto.html?id=${d.id}`}).on("keydown",(e,d)=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();window.location.href=`conjunto.html?id=${d.id}`}})
     .on("pointermove",(e,d)=>tip(e,d)).on("pointerleave",()=>tip());
   cs.select("circle").attr("r",d=>d.pr?7:rad(d.uh,F)).style("fill",d=>d.pr?null:DEC[d.d]);
   cs.select("text").text(d=>d.pr?"":P2(d.num)).style("font-size",(9.5*F)+"px");
@@ -131,7 +131,7 @@ function show(id){
 // legenda e controles
 $("list").innerHTML=[...C].filter(c=>!c.pr).sort((a,b)=>a.num-b.num).map(c=>`<button class="it" data-id="${c.id}"><b>${P2(c.num)}.</b><span>${c.n}</span></button>`).join("")
  +C.filter(c=>c.pr).map(c=>`<button class="it" data-id="${c.id}"><b>○</b><span>${c.n} (em curso)</span></button>`).join("");
-document.querySelectorAll("#list .it").forEach(b=>b.onclick=()=>show(+b.dataset.id));
+document.querySelectorAll("#list .it").forEach(b=>b.onclick=()=>{window.location.href=`conjunto.html?id=${b.dataset.id}`});
 $("sizes").innerHTML=[25,150,300,500,750].map(u=>`<div><div style="width:${2*rad(u)}px;height:${2*rad(u)}px;background:var(--size);margin:auto"></div><span>${u}</span></div>`).join("");
 $("decs").innerHTML=Object.keys(DEC).map(d=>`<button aria-pressed="true" data-d="${d}"><div style="width:24px;height:24px;background:${DEC[d]}"></div><span>${d}</span></button>`).join("");
 document.querySelectorAll("#decs button").forEach(b=>b.onclick=()=>{const d=+b.dataset.d,on=b.getAttribute("aria-pressed")==="true";on?hid.add(d):hid.delete(d);b.setAttribute("aria-pressed",String(!on));render()});
